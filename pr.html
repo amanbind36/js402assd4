@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+        table {
+            width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <form action="" id="form">
+            <input type="text" name="" id="name" placeholder="Product Name">
+            <input type="number" name="" id="price" placeholder="Product Price">
+            <select id="rating">
+                <option value="Good">Good</option>
+                <option value="Average">Average</option>
+                <option value="Bad">Bad</option>
+            </select>
+            <input type="submit" name="" value="Submit">
+        </form>
+        <div>
+            <select id="sortByPrice">
+                <option value="">Sort by Price</option>
+                <option value="price-low-to-high">Low to High</option>
+                <option value="price-high-to-low">High to Low</option>
+                <option value="">Sort by Rating</option>
+                <option value="rating-good-to-bad">Good to Bad</option>
+                <option value="rating-bad-to-good">Bad to Good</option>
+            </select>
+        </div>
+        <div id="display">
+            <table border="1px">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let formData = document.getElementById("form");
+        formData.addEventListener("submit", data);
+        let product = [];
+
+        let tbody = document.querySelector('tbody');
+        const sortBy = document.getElementById("sortByPrice");
+        sortBy.addEventListener('change', applySort);
+
+        function data(event) {
+            event.preventDefault();
+            let name = document.getElementById("name").value;
+            let price = parseFloat(document.getElementById("price").value);
+            let rating = document.getElementById("rating").value;
+            product.push({ name, price, rating });
+            display(product);
+            formData.reset();
+        }
+
+        function applySort() {
+            const sortByValue = sortBy.value;
+            let sortedProducts = [...product];
+            
+            if (sortByValue === 'price-low-to-high') {
+                sortedProducts.sort((a, b) => a.price - b.price);
+            } else if (sortByValue === 'price-high-to-low') {
+                sortedProducts.sort((a, b) => b.price - a.price);
+            } else if (sortByValue === 'rating-good-to-bad') {
+                const ratingOrder = { 'Good': 1, 'Average': 2, 'Bad': 3 };
+                sortedProducts.sort((a, b) => ratingOrder[a.rating] - ratingOrder[b.rating]);
+            } else if (sortByValue === 'rating-bad-to-good') {
+                const ratingOrder = { 'Good': 1, 'Average': 2, 'Bad': 3 };
+                sortedProducts.sort((a, b) => ratingOrder[b.rating] - ratingOrder[a.rating]);
+            }
+            display(sortedProducts);
+        }
+
+        function display(product) {
+            tbody.innerHTML = "";
+            product.forEach(el => {
+                let row = document.createElement("tr");
+                row.className = "card";
+                let name = document.createElement("td");
+                let price = document.createElement("td");
+                let rating = document.createElement("td");
+                name.innerText = el.name;
+                price.innerText = el.price;
+                rating.innerText = el.rating;
+                row.append(name, price, rating);
+                tbody.append(row);
+            });
+        }
+    </script>
+</body>
+</html>
