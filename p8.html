@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table{
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <form action="">
+            <input type="text" id="title" placeholder="Title">
+            <input type="text" id="description" placeholder="Description">
+            <select id="select">
+                <option value="Progress">Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <input type="submit" value="Add Task">
+        </form>
+        <div>
+            <label for="filter">Filter by Status:</label>
+            <select id="filter">
+                <option value="All">All</option>
+                <option value="Progress">Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table border="1px">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Task rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+<script>
+ let filterSelect = document.getElementById("filter");
+
+    let form=document.querySelector("form")
+    let task=[]
+    let tbody=document.querySelector("tbody")
+
+    form.addEventListener("submit",formaction)
+    function formaction(event){
+        event.preventDefault()
+       let title=document.getElementById("title").value;
+       let des=document.getElementById("description").value;
+       let select=document.getElementById("select").value;
+       task.push({title,des,select})
+       console.log(task)
+       display(task)
+       document.querySelector("form").reset();
+    }
+    filterSelect.addEventListener("change", function() {
+        display(task);
+    });
+
+    function deletetask(event){
+ 
+    let index = event.target.parentElement.parentElement.dataset.index;
+        task.splice(index, 1); 
+        display(task);
+       
+      
+    }
+
+    
+    function edittask(event) {
+        let index = event.target.parentElement.parentElement.dataset.index;
+        let item = task[index];
+        document.getElementById("title").value = item.title;
+        document.getElementById("description").value = item.des;
+        document.getElementById("select").value = item.select;
+        task.splice(index, 1);
+        display(task);
+    }
+    function display(task) {
+        tbody.innerHTML = "";
+        let filterValue = filterSelect.value;
+        let filteredTasks = task.filter(function(el) {
+            if (filterValue === "All") {
+                return true;
+            }
+            return el.select === filterValue;
+        });
+
+        filteredTasks.forEach(function(el, index) {
+            let tr1 = document.createElement("tr");
+            tr1.dataset.index = index; // Store index in the row
+
+            let td1 = document.createElement("td");
+            let td2 = document.createElement("td");
+            let td3 = document.createElement("td");
+            let td4 = document.createElement("td");
+
+            let btn1 = document.createElement("button");
+            btn1.innerText = "Delete";
+            btn1.addEventListener("click", deletetask);
+
+            let btn2 = document.createElement("button");
+            btn2.innerText = "Edit";
+            btn2.addEventListener("click", edittask);
+
+            td1.textContent = el.title;
+            td2.textContent = el.des;
+            td3.textContent = el.select;
+            td4.append(btn1, btn2);
+
+            tr1.append(td1, td2, td3, td4);
+            tbody.append(tr1);
+        });
+    }
+
+  
+
+
+  
+
+</script>
